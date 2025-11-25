@@ -1,0 +1,26 @@
+POST http://localhost:3000/api/fruits
+Content-Type: application/json
+
+{
+  "name": "Mangga 2"
+}
+
+###
+GET http://localhost:3000/api/fruits
+Content-Type: application/json
+
+
+###
+GET http://localhost:3000/api/product/jambu?id=4
+
+###
+POST http://localhost:3000/api/product
+Content-Type: application/json
+
+{
+  "name": "Mangga 10",
+  "category":"food",
+  "price":1000,
+  "slug_product":"mangga-2",
+  "description":"mangga enak sekali"
+}

@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+✅ LATIHAN PROJECT: "Product Catalog Manager"
 
-## Getting Started
+Ini project admin sederhana untuk mengelola data produk.
 
-First, run the development server:
+Fitur yang akan kamu kerjakan (step-by-step latihan)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Dashboard – List Produk
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Tampilkan list produk dalam table
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Kolom:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Name
 
-## Learn More
+Price
 
-To learn more about Next.js, take a look at the following resources:
+Category
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Created At
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Actions (Edit, Delete)
 
-## Deploy on Vercel
+Pagination (opsional)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. Create Product
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Button Add Product
+
+Membuka Modal Form
+
+Input:
+
+Name (text)
+
+Price (number)
+
+Category (select)
+
+Description (textarea)
+
+Slug (text)
+
+Validasi:
+
+Name wajib
+
+Price wajib > 0
+
+Toast success/error
+
+Optimistic update (opsional)
+
+3. Edit Product
+
+Klik tombol edit → membuka modal pre-filled
+
+User bisa ubah:
+
+Name
+
+Price
+
+Category
+
+Description
+
+Toast success/error
+
+4. Delete Product
+
+Klik delete → tampilkan confirmation dialog
+
+Setelah confirm:
+
+Delete data
+
+Toast success/error
+
+5. Detail Page (optional tapi real world)
+
+Klik nama produk → masuk ke halaman /product/[slug]
+
+Tampilkan detail lengkap produk
+
+(Slug boleh kita skip dulu kalau kamu belum mau)
+
+🧱 Struktur Halaman
+app/
+├── products/
+│ ├── page.tsx → list product
+│ ├── create/
+│ │ └── actions.ts → server action create
+│ ├── edit/
+│ │ └── actions.ts → server action edit
+│ ├── delete/
+│ │ └── actions.ts → server action delete
+│ └── [id]/page.tsx → detail page (optional)
+└── components/
+├── ProductForm.tsx
+├── ProductModal.tsx
+├── ProductTable.tsx
+
+📚 Skill yang kamu latih dari project ini
+
+✔ Next.js 16 Server Actions
+✔ CRUD lengkap (Create, Read, Update, Delete)
+✔ Modal Form dengan Shadcn UI
+✔ Toast dengan Sonner
+✔ Validasi Form
+✔ Server Component + Client Component
+✔ Optimistic Update
+✔ Reusable Component
+✔ Folder structuring yang rapih
+✔ Real-world use logic
+
+🔥 Tantangan Tambahan (kalau sudah selesai basic)
+
+Tambah search bar
+
+Tambah filter category
+
+Tambah sorting harga
+
+Upload image untuk product
+
+Tambah pagination
+
+Tambah role-based access (admin/user)
+
+contoh data
+export const products = [
+{
+id: 1,
+name: "Laptop Gaming",
+slug: "laptop-gaming",
+price: 15000000,
+category: "Electronics",
+description: "Laptop gaming dengan GPU terbaru.",
+createdAt: new Date(),
+},
+];
