@@ -45,7 +45,7 @@ const ProductList = ({ products }: { products: ProductsType[] }) => {
   const product = products.find((product: ProductsType) => product.id === openId);
 
   return (
-    <div className='grid grid-cols-5 gap-4'>
+    <div className='grid grid-cols-5 gap-4 pt-5'>
       {products.map((product: ProductsType) => {
         return (
           <div key={product.id} className='w-full'>

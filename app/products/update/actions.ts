@@ -3,8 +3,9 @@ import { db } from "@/db";
 import { products } from "@/db/schema";
 import { generateSlug } from "@/lib/generateSlug";
 import { productSchema } from "@/schema/products-schema";
-import { eq } from "drizzle-orm";
+import { eq, ilike } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function updateProduct(
   prevState:
@@ -61,4 +62,14 @@ export async function updateProduct(
   } finally {
     revalidatePath("/products");
   }
+}
+
+export async function searchProduct(formData: FormData) {
+  const q = (formData.get("query") as string) ?? "";
+
+  if (!q) {
+    redirect("/products");
+  }
+
+  redirect(`/products?q=${q}`);
 }

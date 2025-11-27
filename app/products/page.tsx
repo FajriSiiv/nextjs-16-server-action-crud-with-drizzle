@@ -1,23 +1,25 @@
-import React from 'react'
-import ProductList from './_components/ProductList'
+import { Suspense } from 'react'
 import FormCreate from './_components/FormCreate'
+import Header from './_components/Header'
+import ProductTableSkeleton from './_components/ProductTableSkeleton'
+import ProductListWrapper from './_components/ProductListWrapper'
+import SearchBar from './_components/searchBar'
 
-async function getProducts() {
-  const results = await fetch('http://localhost:3000/api/product', {
-    cache: 'no-store'
-  })
+const ProductPage = async ({ searchParams, }: { searchParams: Promise<{ q: string }> }) => {
+  const q = (await searchParams).q || "";
 
-  return results.json()
-}
 
-const ProductPage = async () => {
-
-  const products = await getProducts()
 
   return (
     <div className='p-10'>
+      <Header />
       <h1 className='text-4xl font-bold mb-10 uppercase'>Product List</h1>
-      <ProductList products={products} />
+      <SearchBar />
+      {/* Hanya mencoba suspense */}
+      {/* Lebih baik menggunakan suspense jika multi-fetching saja */}
+      <Suspense fallback={<ProductTableSkeleton />}>
+        <ProductListWrapper query={q} />
+      </Suspense>
       <FormCreate />
     </div>
   )

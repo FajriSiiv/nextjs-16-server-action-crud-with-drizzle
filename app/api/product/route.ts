@@ -1,10 +1,26 @@
 import { db } from "@/db";
 import { products } from "@/db/schema";
+import { like } from "drizzle-orm";
+import { NextRequest } from "next/server";
 
-export async function GET() {
-  const results = await db.select().from(products);
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const search = searchParams.get("q");
 
-  return Response.json(results);
+  try {
+    const results = search
+      ? await db
+          .select()
+          .from(products)
+          .where(like(products.name, `%${search}%`))
+      : await db.select().from(products);
+    console.log(results, "dari route.ts");
+
+    return Response.json(results);
+  } catch (err) {
+    console.error("API ERROR:", err);
+    return Response.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
 
 export async function POST(req: Request) {
