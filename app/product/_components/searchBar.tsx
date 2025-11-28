@@ -12,6 +12,7 @@ const SearchBar = () => {
   const searchParams = useSearchParams()
 
   const hasQuery = Boolean(searchParams.get("q"))
+  const queryUrl = searchParams.get("q")
 
   const handleReset = () => {
     setQuery("")
@@ -24,7 +25,7 @@ const SearchBar = () => {
       searchProduct(new FormData(e.currentTarget))
     }} className="flex w-full max-w-sm items-center gap-2">
       <Input name='query' type="text" placeholder="Search product.." value={query} onChange={e => setQuery(e.target.value)} />
-      {hasQuery ? (
+      {hasQuery && query === queryUrl ? (
         <Button type="button" onClick={handleReset} variant="outline">
           Reset
         </Button>

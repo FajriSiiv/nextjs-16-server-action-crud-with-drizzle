@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { products } from "@/db/schema";
 import { generateSlug } from "@/lib/generateSlug";
 import { productSchema } from "@/schema/products-schema";
-import { eq, ilike } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -70,6 +70,5 @@ export async function searchProduct(formData: FormData) {
   if (!q) {
     redirect("/product");
   }
-
   redirect(`/product?q=${q}`);
 }

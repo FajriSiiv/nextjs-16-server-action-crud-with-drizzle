@@ -1,18 +1,18 @@
 import { db } from "@/db";
 import { products } from "@/db/schema";
-import { like } from "drizzle-orm";
+import { ilike, like } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const search = searchParams.get("q");
-
+  console.log(search);
   try {
     const results = search
       ? await db
           .select()
           .from(products)
-          .where(like(products.name, `%${search}%`))
+          .where(ilike(products.name, `%${search}%`))
       : await db.select().from(products);
 
     return Response.json(results);
