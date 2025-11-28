@@ -1,8 +1,8 @@
-import { drizzle } from "drizzle-orm/better-sqlite3";
-// @ts-expect-error no types for better-sqlite3
-import Database from "better-sqlite3";
-import * as schema from "./schema";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 
-const sqlite = new Database("local.db");
+const pool = new Pool({
+  connectionString: process.env.SUPABASE_DB_URL!,
+});
 
-export const db = drizzle(sqlite, { schema });
+export const db = drizzle(pool);

@@ -1,9 +1,3 @@
-export type EmployeesType = {
-  name: string;
-  id: number;
-  position: string;
-};
-
 export type ProductsType = {
   name: string;
   price: number;

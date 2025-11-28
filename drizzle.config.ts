@@ -3,8 +3,12 @@ import { defineConfig } from "drizzle-kit";
 export default defineConfig({
   out: "./migrations",
   schema: "./db/schema.ts",
-  dialect: "sqlite",
+  // driver: "pg",
+  dialect: "postgresql",
+  // dbCredentials: {
+  //   url: "./local.db",
+  // },
   dbCredentials: {
-    url: "./local.db",
+    url: process.env.SUPABASE_DB_URL!,
   },
 });

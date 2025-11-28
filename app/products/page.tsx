@@ -8,8 +8,6 @@ import SearchBar from './_components/searchBar'
 const ProductPage = async ({ searchParams, }: { searchParams: Promise<{ q: string }> }) => {
   const q = (await searchParams).q || "";
 
-
-
   return (
     <div className='p-10'>
       <Header />

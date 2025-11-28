@@ -1,22 +1,11 @@
-import { integer, text, sqliteTable } from "drizzle-orm/sqlite-core";
+import { pgTable, serial, varchar } from "drizzle-orm/pg-core";
 
-export const fruits = sqliteTable("fruits", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  name: text("name").notNull(),
-});
-
-export const employees = sqliteTable("employees", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  name: text("name").notNull(),
-  position: text("position").notNull(),
-});
-
-export const products = sqliteTable("products", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  name: text("name").notNull(),
-  description: text("description").notNull(),
-  slug_product: text("slug_product").notNull(),
-  price: integer("price").notNull(),
-  createdAt: text("created_at").default(new Date().toISOString()),
-  category: text("category").notNull(),
+export const products = pgTable("products", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: varchar("description").notNull(),
+  slug_product: varchar("slug_product").notNull(),
+  price: serial("price").notNull(),
+  createdAt: varchar("created_at").default(new Date().toISOString()),
+  category: varchar("category").notNull(),
 });
