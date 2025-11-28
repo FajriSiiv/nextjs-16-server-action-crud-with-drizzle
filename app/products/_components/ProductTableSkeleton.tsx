@@ -18,7 +18,7 @@ const CardSkeleton = () => {
 
 const ProductTableSkeleton = () => {
   return (
-    <div className='grid grid-cols-5 gap-4'>
+    <div className='grid grid-cols-5 gap-4 mt-5'>
       <CardSkeleton />
       <CardSkeleton />
       <CardSkeleton />
