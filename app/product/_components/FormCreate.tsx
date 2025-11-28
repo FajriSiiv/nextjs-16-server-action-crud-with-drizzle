@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { categoryProducts, productInterface } from '@/schema/products-schema'
 import { Plus } from 'lucide-react'
-import React, { useActionState, useEffect, useRef, useState } from 'react'
+import React, { useActionState, useRef, useState } from 'react'
 import { createProduct } from '../create/actions'
 
 const FormCreate = () => {

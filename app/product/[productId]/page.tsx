@@ -4,7 +4,9 @@ import Link from 'next/link'
 import React from 'react'
 
 async function getProduct(id: string | undefined, slug: string) {
-  const result = await fetch(`http://localhost:3000/api/product/${slug}?id=${id}`, {
+  const urlHttp = process.env.NEXT_PUBLIC_SITE_URL;
+
+  const result = await fetch(`${urlHttp}/api/product/${slug}?id=${id}`, {
     cache: 'no-store'
   }).then((res) => res.json())
 
@@ -20,7 +22,7 @@ const ProductDetail = async ({ params, searchParams, }: { params: Promise<{ prod
   return (
     <div className='w-3/4 mx-auto py-10 '>
       <Button variant='link' className='p-0 h-fit mb-10'>
-        <Link href={'/products'}>Kembali</Link>
+        <Link href={'/product'}>Kembali</Link>
       </Button>
       <div className='flex flex-col gap-5'>
         <h1 className='text-4xl font-bold font-mono'>{product.name}</h1>

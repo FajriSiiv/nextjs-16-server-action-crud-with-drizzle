@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { products } from "@/db/schema";
 import { like } from "drizzle-orm";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -14,7 +14,6 @@ export async function GET(req: NextRequest) {
           .from(products)
           .where(like(products.name, `%${search}%`))
       : await db.select().from(products);
-    console.log(results, "dari route.ts");
 
     return Response.json(results);
   } catch (err) {
@@ -23,7 +22,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const { name, price, category, description, slug_product } = await req.json();
 
   const results = await db

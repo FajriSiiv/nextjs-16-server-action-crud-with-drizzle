@@ -34,8 +34,6 @@ export async function createProduct(
       errors: {},
     };
   } catch (err: any) {
-    console.log(err);
-
     if (err.errors || err.issues || err.flatten) {
       return {
         success: false,
@@ -50,6 +48,6 @@ export async function createProduct(
       errors: {},
     };
   } finally {
-    revalidatePath("/products");
+    revalidatePath("/product");
   }
 }

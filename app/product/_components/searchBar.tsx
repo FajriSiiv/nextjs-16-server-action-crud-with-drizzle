@@ -15,7 +15,7 @@ const SearchBar = () => {
 
   const handleReset = () => {
     setQuery("")
-    router.replace('/products')
+    router.replace('/product')
   }
 
   return (

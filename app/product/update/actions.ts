@@ -60,7 +60,7 @@ export async function updateProduct(
       errors: [],
     };
   } finally {
-    revalidatePath("/products");
+    revalidatePath("/product");
   }
 }
 
@@ -68,8 +68,8 @@ export async function searchProduct(formData: FormData) {
   const q = (formData.get("query") as string) ?? "";
 
   if (!q) {
-    redirect("/products");
+    redirect("/product");
   }
 
-  redirect(`/products?q=${q}`);
+  redirect(`/product?q=${q}`);
 }

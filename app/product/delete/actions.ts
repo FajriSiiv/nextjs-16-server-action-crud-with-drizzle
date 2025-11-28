@@ -8,7 +8,7 @@ import { revalidatePath } from "next/cache";
 export async function deleteProduct(id: number) {
   await db.delete(products).where(eq(products.id, id));
 
-  revalidatePath("/products");
+  revalidatePath("/product");
 
   return {
     success: true,

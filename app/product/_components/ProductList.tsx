@@ -26,7 +26,7 @@ const CardProduct = ({ product, handleOpen }: { product: ProductsType, handleOpe
         </CardDescription>
         <CardAction className='flex flex-row gap-2'>
           <Button className='bg-emerald-600 cursor-pointer p-0 h-fit'>
-            <Link className='py-2 px-3' href={`/products/${product.slug_product}?id=${product.id}`} >Detail</Link>
+            <Link className='py-2 px-3' href={`/product/${product.slug_product}?id=${product.id}`} >Detail</Link>
           </Button>
           <Button variant="destructive" className='cursor-pointer' onClick={() => deleteProduct(product.id)}>Delete</Button>
         </CardAction>

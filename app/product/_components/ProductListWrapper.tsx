@@ -1,8 +1,7 @@
 import ProductList from "./ProductList";
 
 async function getProducts(query: string | undefined) {
-  console.log(query, 'query');
-  const urlHttp = 'http://localhost:3000'
+  const urlHttp = process.env.NEXT_PUBLIC_SITE_URL;
   const url = query
     ? `${urlHttp}/api/product?q=${query}`
     : `${urlHttp}/api/product`;
@@ -10,7 +9,7 @@ async function getProducts(query: string | undefined) {
   const res = await fetch(url, { cache: "no-store" });
 
   if (!res.ok) {
-    console.log("FETCH ERROR:", await res.text());
+    // console.log("FETCH ERROR:", await res.text());
     return [];
   }
 
