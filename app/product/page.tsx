@@ -4,9 +4,19 @@ import Header from './_components/Header'
 import ProductTableSkeleton from './_components/ProductTableSkeleton'
 import ProductListWrapper from './_components/ProductListWrapper'
 import SearchBar from './_components/searchBar'
+import { createSupabaseServerClient } from '@/lib/supabase'
+import { redirect } from 'next/navigation'
 
 const ProductPage = async ({ searchParams, }: { searchParams: Promise<{ q: string }> }) => {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect('/login');
+  }
+
   const q = (await searchParams).q || "";
+
 
   return (
     <div className='p-10'>
