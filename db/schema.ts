@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
 
 export const products = pgTable("products", {
   id: serial("id").primaryKey(),
@@ -8,4 +8,5 @@ export const products = pgTable("products", {
   price: serial("price").notNull(),
   createdAt: varchar("created_at").default(new Date().toISOString()),
   category: varchar("category").notNull(),
+  image_url: text("image_url"),
 });

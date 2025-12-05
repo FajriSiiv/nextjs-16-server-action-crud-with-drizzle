@@ -24,7 +24,7 @@ const FormUpdate = ({ open, onOpenChange, product }: { open: boolean | undefined
     if (open && product) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setCategory(product.category);
-      console.log("Product category:", product.category)
+      // console.log("Product category:", product.category)
 
     }
 

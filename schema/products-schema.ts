@@ -8,6 +8,7 @@ export const productSchema = z.object({
   category: z.enum(categoryProducts),
   description: z.string().min(5, "Deskripsi minamal 5 huruf"),
   slug_product: z.string(),
+  image_url: z.string().url("URL gambar tidak valid").optional().nullable(),
 });
 
 export type productInterface = {
@@ -17,6 +18,7 @@ export type productInterface = {
     category?: string[];
     description?: string[];
     slug_product?: string[];
+    image_url?: string[];
     _form?: string[];
   };
   message?: string;
