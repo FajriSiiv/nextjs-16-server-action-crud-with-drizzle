@@ -6,4 +6,5 @@ export type ProductsType = {
   id: number;
   slug_product: string;
   createdAt: Date;
+  image_url: string;
 };

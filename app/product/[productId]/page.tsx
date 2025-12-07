@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { ProductsType } from '@/lib/type'
+import Image from 'next/image';
 import Link from 'next/link'
 import React from 'react'
 
@@ -26,6 +27,7 @@ const ProductDetail = async ({ params, searchParams, }: { params: Promise<{ prod
       </Button>
       <div className='flex flex-col gap-5'>
         <h1 className='text-4xl font-bold font-mono'>{product.name}</h1>
+        <Image src={product.image_url} width={400} height={300} className='object-cover rounded-md' alt={product.slug_product} />
         <div className='flex flex-col'>
           <p>description : {product.description}</p>
           <b>price : Rp.{product.price}</b>

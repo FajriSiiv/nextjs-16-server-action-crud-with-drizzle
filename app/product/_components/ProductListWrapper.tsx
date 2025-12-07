@@ -9,7 +9,6 @@ async function getProducts(query: string | undefined) {
   const res = await fetch(url, { cache: "no-store" });
 
   if (!res.ok) {
-    // console.log("FETCH ERROR:", await res.text());
     return [];
   }
 

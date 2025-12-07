@@ -1,4 +1,5 @@
 "use server";
+
 import { createSupabaseServerClient } from "@/lib/supabase";
 
 export async function signOutAction() {

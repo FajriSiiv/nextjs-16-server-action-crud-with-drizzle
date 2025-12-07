@@ -5,9 +5,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { categoryProducts, productInterface } from '@/schema/products-schema'
-import { Plus } from 'lucide-react'
+import { ImageIcon, Plus, X } from 'lucide-react'
 import React, { useActionState, useRef, useState } from 'react'
 import { createProduct } from '../create/actions'
+import { showToast } from '@/lib/toast'
+
 
 const FormCreate = () => {
   const ref = useRef<HTMLFormElement>(null);
@@ -18,6 +20,11 @@ const FormCreate = () => {
     const result = await createProduct(prev, formData);
 
     if (result.success) {
+      showToast(result?.message, "success")
+      setOpenForm(false);
+    }
+    if (result.errors) {
+      showToast(result?.message, "error")
       setOpenForm(false);
     }
 
@@ -25,22 +32,43 @@ const FormCreate = () => {
   }, {
     success: false,
     message: "",
-    errors: null,
+    errors: {},
   })
+
+  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+
+    if (file && file.type.startsWith('image/')) {
+      setSelectedFile(file);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    } else {
+      setSelectedFile(null);
+      setPreviewUrl(null);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setSelectedFile(null);
+    setPreviewUrl(null);
+  };
 
 
 
   return (
     <Dialog open={openForm} onOpenChange={(value) => setOpenForm(value)}>
-      <DialogTrigger asChild className='absolute bottom-10 right-10'>
+      <DialogTrigger asChild className='fixed bottom-10 right-10'>
         <Button variant="outline" size="lg" aria-label="Submit" className='flex flex-row items-center justify-center'>
           <Plus /> Create
         </Button>
       </DialogTrigger>
-      {state.success && (
-        <p className="text-green-600 text-sm mb-2">{state.message}</p>
-      )}
-      <DialogContent className="sm:max-w-[425px] "
+      <DialogContent className="sm:max-w-[805px] overflow-y-scroll max-h-[90vh]"
         onEscapeKeyDown={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
       >
@@ -83,15 +111,57 @@ const FormCreate = () => {
               </Select>
               <Input type="hidden" name="category" value={category} />
 
+              {state.errors?.category && (
+                <p className="text-red-600 text-sm">{state.errors.category}</p>
+              )}
             </div>
-            {state.errors?.category && (
-              <p className="text-red-600 text-sm">{state.errors.category}</p>
-            )}
             <div className="grid gap-3">
               <Label htmlFor="price-1">Price</Label>
               <Input id="price-1" name="price" min={1} />
               {state.errors?.price && (
                 <p className="text-red-600 text-sm">{state.errors.price}</p>
+              )}
+            </div>
+            <div className="grid gap-3">
+              <Label>Your product image</Label>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="p-2"
+                name="image_file"
+              />
+              {previewUrl && selectedFile && (
+                <div className="relative border rounded-md p-1">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="icon"
+                    className="absolute top-1 right-1 h-6 w-6 z-10 opacity-80"
+                    onClick={handleRemoveFile}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={previewUrl}
+                    alt={`Pratinjau ${selectedFile.name}`}
+                    className="w-full h-[200px] object-cover object-bottom rounded-sm"
+                  />
+                  <p className="text-xs text-muted-foreground mt-2 truncate">
+                    {selectedFile.name}
+                  </p>
+                </div>
+              )}
+
+              {!previewUrl && (
+                <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-md text-center bg-gray-50/50">
+                  <ImageIcon className="w-6 h-6 text-muted-foreground mb-2" />
+                  <p className="text-sm text-muted-foreground">Belum ada gambar dipilih</p>
+                </div>
+              )}
+              {state.errors?.image_file && (
+                <p className="text-red-600 text-sm">{state.errors?.image_file}</p>
               )}
             </div>
           </div>
