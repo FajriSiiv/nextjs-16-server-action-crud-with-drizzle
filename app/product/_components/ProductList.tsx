@@ -1,7 +1,7 @@
 "use client"
 import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { deleteProduct } from '../delete/actions'
 import Link from 'next/link'
 import { ProductsType } from '@/lib/type'
@@ -19,11 +19,16 @@ const SkeletonImage = () => {
   )
 }
 
-const SectionImage = ({ name, url }) => {
+const SectionImage = ({ name, url }: { name: string, url: string }) => {
   return (
-    <div className='w-full h-[100px]  rounded-md'>
-      <Image alt={name} src={url} />
-    </div>
+    <div >
+      <Image
+        alt={name}
+        src={url}
+        fill={true}
+        className='object-cover rounded-md'
+        sizes="(max-width: 768px) 100vw, 33vw"
+      />    </div>
   )
 }
 
@@ -36,7 +41,9 @@ const CardProduct = ({ product, handleOpen }: { product: ProductsType, handleOpe
         <Edit />
       </Button>
       <CardHeader>
-        {product.image_url ? <SectionImage url={product.image_url} name={product.slug_product} /> : <SkeletonImage />}
+        <div className='w-full h-[100px] rounded-md relative'>
+          {product.image_url ? <SectionImage url={product.image_url} name={product.slug_product} /> : <SkeletonImage />}
+        </div>
       </CardHeader>
       <CardContent className='flex flex-col gap-2'>
         <CardTitle>{product.name.slice(0, 20)}...</CardTitle>
@@ -61,8 +68,27 @@ const ProductList = ({ products }: { products: ProductsType[] }) => {
 
   const [openId, setOpenId] = useState<string | number | undefined | null>(null);
 
-  const handleOpen = (id: string | number) => setOpenId(id);
-  const handleClose = () => setOpenId(null);
+  // const handleOpen = (id: string | number) => {
+  //   console.log('open drawer', id);
+  //   setOpenId(id)
+  // };
+  const handleOpen = (id: string | number) => {
+    console.log('open drawer - ID:', id);
+
+    setOpenId(null);
+
+    setTimeout(() => {
+      setOpenId(id);
+    }, 0);
+  };
+
+  console.log('Current openId:', openId, 'Prop open:', !!openId);
+
+  const handleOpenChange = useCallback((openState: boolean) => {
+    if (openState === false) {
+      setOpenId(null);
+    }
+  }, [setOpenId]);
 
   const product = products.find((product: ProductsType) => product.id === openId);
 
@@ -77,7 +103,7 @@ const ProductList = ({ products }: { products: ProductsType[] }) => {
       }
       )}
 
-      <FormUpdate open={!!openId} onOpenChange={handleClose} product={product} />
+      <FormUpdate open={!!openId} onOpenChange={handleOpenChange} product={product} />
     </div>
   )
 }

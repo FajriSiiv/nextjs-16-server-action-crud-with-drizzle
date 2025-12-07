@@ -3,89 +3,111 @@
 import { db } from "@/db";
 import { products } from "@/db/schema";
 import { generateSlug } from "@/lib/generateSlug";
-// import { createSupabaseServerClient } from "@/lib/supabase";
+import { createSupabaseServerClient } from "@/lib/supabase";
 import { productInterface, productSchema } from "@/schema/products-schema";
+import { count } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+
+const PRODUCT_IMAGE_BUCKET = "product_images";
+const MAX_PRODUCTS_LIMIT = 10;
 
 export async function createProduct(
   prevState: productInterface,
   formData: FormData
 ) {
+  const fileToUpload = formData.get("image_file") as File | null;
+  const productName = formData.get("name") ?? "";
+  const slug = generateSlug(productName as string);
+
+  const inputData = {
+    name: productName,
+    price: Number(formData.get("price")),
+    category: formData.get("category"),
+    description: formData.get("description"),
+    slug_product: slug,
+    image_file: fileToUpload,
+  };
+
   try {
-    const image_url = formData.get("image_url") as string | null;
+    const productCountResult = await db
+      .select({
+        count: count(),
+      })
+      .from(products);
 
-    const parsed: any = productSchema.safeParse({
-      name: formData.get("name") ?? "",
-      price: Number(formData.get("price")) ?? "",
-      category: formData.get("category") ?? "",
-      description: formData.get("description") ?? "",
-      slug_product: generateSlug(formData.get("name") ?? ""),
-      image_url: image_url || undefined,
-    });
+    // Ambil nilai hitungan pertama
+    const currentProductCount = productCountResult[0].count;
 
-    // let imageUrl: string | null = null;
-    // const PRODUCT_IMAGE_BUCKET = "product_images";
-    // const supabase = await createSupabaseServerClient();
+    if (currentProductCount >= MAX_PRODUCTS_LIMIT) {
+      return {
+        success: false,
+        message: `Gagal membuat produk. Batas maksimum ${MAX_PRODUCTS_LIMIT} produk telah tercapai.`,
+        errors: {},
+      };
+    }
 
-    // if (image_url instanceof File && image_url.size > 0) {
-    //   // Buat nama file unik (misalnya, timestamp + nama asli)
-    //   const filename = `${Date.now()}-${slug_product}-${image_url.name.replace(
-    //     /\s/g,
-    //     "_"
-    //   )}`;
-
-    //   // Unggah File Object langsung ke Supabase Storage
-    //   const { data: uploadData, error: uploadError } = await supabase.storage
-    //     .from(PRODUCT_IMAGE_BUCKET)
-    //     .upload(filename, image_url, {
-    //       cacheControl: "3600",
-    //       upsert: false,
-    //       contentType: image_url.type,
-    //     });
-
-    //   if (uploadError) {
-    //     console.error("Kesalahan Upload Supabase:", uploadError);
-    //     // Penting: Jika upload gagal, hentikan operasi DB
-    //     return Response.json(
-    //       { message: "Gagal mengunggah gambar." },
-    //       { status: 500 }
-    //     );
-    //   }
-
-    //   // 3. Dapatkan URL Publik
-    //   // Konstruksi URL harus disesuaikan dengan template Supabase Anda
-    //   imageUrl = `${process.env
-    //     .NEXT_PUBLIC_SUPABASE_URL!}/storage/v1/object/public/${PRODUCT_IMAGE_BUCKET}/${
-    //     uploadData.path
-    //   }`;
-    // }
+    const parsed = productSchema.safeParse(inputData);
 
     if (!parsed.success) {
       return {
         success: false,
+        message: "Validasi gagal. Periksa kembali input Anda.",
         errors: parsed.error.flatten().fieldErrors ?? {},
       };
     }
 
-    await db.insert(products).values(parsed);
+    const { image_file, ...productData } = parsed.data;
 
-    return {
-      success: true,
-      message: "Success create product",
-      errors: {},
-    };
-  } catch (err: any) {
-    if (err.errors || err.issues || err.flatten) {
+    if (!image_file) {
       return {
         success: false,
-        message: "Validation failed",
-        errors: err.flatten().fieldErrors ?? {},
+        message: "File gambar tidak ditemukan.",
+        errors: {},
       };
     }
 
+    let publicImageUrl: string;
+    const supabase = await createSupabaseServerClient();
+
+    const fileName = `${slug}-${Date.now()}`;
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from(PRODUCT_IMAGE_BUCKET)
+      .upload(fileName, image_file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (uploadError) {
+      console.error("Supabase Upload Error:", uploadError);
+      return {
+        success: false,
+        message: `Gagal mengunggah gambar: ${uploadError.message}`,
+        errors: {},
+      };
+    }
+
+    const { data: urlData } = supabase.storage
+      .from(PRODUCT_IMAGE_BUCKET)
+      .getPublicUrl(fileName);
+
+    publicImageUrl = urlData.publicUrl;
+
+    await db.insert(products).values({
+      ...productData,
+      image_url: publicImageUrl,
+    });
+
+    return {
+      success: true,
+      message: "Produk berhasil dibuat!",
+      errors: {},
+    };
+  } catch (err: any) {
+    console.error("Server Error:", err);
     return {
       success: false,
-      message: "Unknown error",
+      message: "Terjadi kesalahan server saat menyimpan produk.",
       errors: {},
     };
   } finally {

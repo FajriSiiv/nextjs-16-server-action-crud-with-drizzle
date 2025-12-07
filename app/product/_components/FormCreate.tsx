@@ -8,6 +8,7 @@ import { categoryProducts, productInterface } from '@/schema/products-schema'
 import { ImageIcon, Plus, X } from 'lucide-react'
 import React, { useActionState, useRef, useState } from 'react'
 import { createProduct } from '../create/actions'
+import { showToast } from '@/lib/toast'
 
 
 const FormCreate = () => {
@@ -19,6 +20,11 @@ const FormCreate = () => {
     const result = await createProduct(prev, formData);
 
     if (result.success) {
+      showToast(result?.message, "success")
+      setOpenForm(false);
+    }
+    if (result.errors) {
+      showToast(result?.message, "error")
       setOpenForm(false);
     }
 
@@ -26,7 +32,7 @@ const FormCreate = () => {
   }, {
     success: false,
     message: "",
-    errors: null,
+    errors: {},
   })
 
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
@@ -37,7 +43,6 @@ const FormCreate = () => {
 
     if (file && file.type.startsWith('image/')) {
       setSelectedFile(file);
-      // Membuat URL sementara untuk ditampilkan di <img>
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
     } else {
@@ -48,7 +53,6 @@ const FormCreate = () => {
 
   const handleRemoveFile = () => {
     if (previewUrl) {
-      // Membersihkan URL objek agar tidak membebani memori browser
       URL.revokeObjectURL(previewUrl);
     }
     setSelectedFile(null);
@@ -59,15 +63,12 @@ const FormCreate = () => {
 
   return (
     <Dialog open={openForm} onOpenChange={(value) => setOpenForm(value)}>
-      <DialogTrigger asChild className='absolute bottom-10 right-10'>
+      <DialogTrigger asChild className='fixed bottom-10 right-10'>
         <Button variant="outline" size="lg" aria-label="Submit" className='flex flex-row items-center justify-center'>
           <Plus /> Create
         </Button>
       </DialogTrigger>
-      {state.success && (
-        <p className="text-green-600 text-sm mb-2">{state.message}</p>
-      )}
-      <DialogContent className="sm:max-w-[425px] overflow-y-scroll max-h-[90vh]"
+      <DialogContent className="sm:max-w-[805px] overflow-y-scroll max-h-[90vh]"
         onEscapeKeyDown={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
       >
@@ -110,10 +111,10 @@ const FormCreate = () => {
               </Select>
               <Input type="hidden" name="category" value={category} />
 
+              {state.errors?.category && (
+                <p className="text-red-600 text-sm">{state.errors.category}</p>
+              )}
             </div>
-            {state.errors?.category && (
-              <p className="text-red-600 text-sm">{state.errors.category}</p>
-            )}
             <div className="grid gap-3">
               <Label htmlFor="price-1">Price</Label>
               <Input id="price-1" name="price" min={1} />
@@ -128,7 +129,7 @@ const FormCreate = () => {
                 accept="image/*"
                 onChange={handleFileChange}
                 className="p-2"
-                name="image_url"
+                name="image_file"
               />
               {previewUrl && selectedFile && (
                 <div className="relative border rounded-md p-1">
@@ -158,6 +159,9 @@ const FormCreate = () => {
                   <ImageIcon className="w-6 h-6 text-muted-foreground mb-2" />
                   <p className="text-sm text-muted-foreground">Belum ada gambar dipilih</p>
                 </div>
+              )}
+              {state.errors?.image_file && (
+                <p className="text-red-600 text-sm">{state.errors?.image_file}</p>
               )}
             </div>
           </div>
